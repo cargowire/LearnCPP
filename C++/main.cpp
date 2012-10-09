@@ -1,14 +1,7 @@
 #include <windows.h>
 #include <memory>
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-void OnSize(HWND hwnd, UINT flag, int width, int height);
-
-struct StateInfo {
-    int r;
-	int g;
-	int b;
-};
+#include "main.h"
 
 int WINAPI wWinMain(HINSTANCE hInstance /* The current application instance handle */,
 	HINSTANCE, /* Previous window - no longer any meaning so ignored */
@@ -107,8 +100,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd /* Handle to the window */,
             HDC hdc = BeginPaint(hwnd, &ps);
 
 			// Get State
-			LONG_PTR ptr = GetWindowLongPtr(hwnd, GWLP_USERDATA);
-			StateInfo *pState = reinterpret_cast<StateInfo*>(ptr);
+			StateInfo *pState = GetAppState(hwnd);
 
 			// GDI function
             FillRect(hdc, &ps.rcPaint /* Current update region */, CreateSolidBrush(RGB(pState->r, pState->g, pState->b)));
@@ -124,8 +116,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd /* Handle to the window */,
 void OnSize(HWND hwnd, UINT flag, int width, int height)
 {
     // Change colours on resize (just for something to do using application state)
-	LONG_PTR ptr = GetWindowLongPtr(hwnd, GWLP_USERDATA);
-	StateInfo *pState = reinterpret_cast<StateInfo*>(ptr);
+	StateInfo *pState = GetAppState(hwnd);
 
 	if(pState->r < 255)
 		pState->r++;
@@ -142,4 +133,10 @@ void OnSize(HWND hwnd, UINT flag, int width, int height)
 	else
 		pState->b = 0;
 }
- 
+
+inline StateInfo* GetAppState(HWND hwnd)
+{
+    LONG_PTR ptr = GetWindowLongPtr(hwnd, GWLP_USERDATA);
+    StateInfo *pState = reinterpret_cast<StateInfo*>(ptr);
+    return pState;
+}
