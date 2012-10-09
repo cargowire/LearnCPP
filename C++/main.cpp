@@ -17,8 +17,7 @@ int WINAPI wWinMain(HINSTANCE hInstance /* The current application instance hand
 
     ShowWindow(win.Window(), nCmdShow);
 
-    // Run the message loop.
-
+	// Run the message loop.
     MSG msg = { };
     while (GetMessage(&msg, NULL, 0, 0))
     {

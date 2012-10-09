@@ -1,3 +1,5 @@
+#include <shobjidl.h> 
+
 #include "MainWindow.h"
 
 // Start with black as the colour
@@ -35,8 +37,58 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 				EndPaint(m_hwnd, &ps);
 			}
-        return 0;
+			return 0;
+		case WM_SHOWWINDOW: // Closest thing to 'on load' I could find :)
+			{
+				bool showing = wParam != 0;
+				if(showing)
+				{
+					// Initialize the COM library in apartment threaded with OLE disabled
+					HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+					if (SUCCEEDED(hr))
+					{
+						// We want to populate an IFileOpenDialog from COM
+						IFileOpenDialog *pFileOpen;
 
+						// Create the FileOpenDialog object and populate our interface pointer
+						hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, 
+								IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+
+						if (SUCCEEDED(hr))
+						{
+							// Show the Open dialog box.
+							hr = pFileOpen->Show(NULL);
+
+							// Get the file name from the dialog box.
+							if (SUCCEEDED(hr))
+							{
+								// Store the chosen file in a shell item interface pointer
+								IShellItem *pItem;
+								hr = pFileOpen->GetResult(&pItem);
+								if (SUCCEEDED(hr))
+								{
+									PWSTR pszFilePath;
+									hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+									// Display the file name to the user.
+									if (SUCCEEDED(hr))
+									{
+										MessageBox(NULL, pszFilePath, L"File Path", MB_OK);
+										CoTaskMemFree(pszFilePath);
+									}
+									// Last action in successful pointer scope is to release
+									pItem->Release();
+								}
+							}
+							// Last action in successful pointer scope is to release
+							pFileOpen->Release();
+						}
+						CoUninitialize();
+					}
+					return 0;
+				}
+			}
+			break;
     }
     return DefWindowProc(m_hwnd, uMsg, wParam, lParam); // Do the default action
 }
