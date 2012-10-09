@@ -1,6 +1,14 @@
 #include <windows.h>
+#include <memory>
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+void OnSize(HWND hwnd, UINT flag, int width, int height);
+
+struct StateInfo {
+    int r;
+	int g;
+	int b;
+};
 
 int WINAPI wWinMain(HINSTANCE hInstance /* The current application instance handle */,
 	HINSTANCE, /* Previous window - no longer any meaning so ignored */
@@ -18,6 +26,12 @@ int WINAPI wWinMain(HINSTANCE hInstance /* The current application instance hand
 
     RegisterClass(&wc); // Register this class for use
 
+	// Create state to pass through to the window
+	StateInfo *pState = new (std::nothrow) StateInfo;
+	pState->r = 0;
+	pState->g = 0;
+	pState->b = 0;
+
     // Create the window.
     HWND hwnd = CreateWindowEx(
         0,                                  // Optional window styles e.g. transparent etc
@@ -31,7 +45,7 @@ int WINAPI wWinMain(HINSTANCE hInstance /* The current application instance hand
         NULL,       // Parent window if this were to be a child   
         NULL,       // Menu
         hInstance,  // Application instance handle
-        NULL        // Additional application data
+        pState        // Any pointer you want.  When WM_NCCREATE or WM_CREATE are called it can be extracted
         );
 
 	// Handle failure condition - kill app
@@ -62,6 +76,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd /* Handle to the window */,
 {
     switch (uMsg)
     {
+	case WM_CREATE:
+		{
+			// When you receive the WM_NCCREATE and WM_CREATE messages, the lParam parameter of each message is a pointer to a
+			// CREATESTRUCT structure. The CREATESTRUCT structure, in turn, contains the pointer that you passed into CreateWindowEx.
+			CREATESTRUCT *pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+			StateInfo *pState = reinterpret_cast<StateInfo*>(pCreate->lpCreateParams);
+
+			// Store it on the window
+			SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pState);
+		}
+		break;
     case WM_DESTROY:
         PostQuitMessage(0); // Add message to the queue to quit the application (return a 0 response from GetMessage)
         return 0;
@@ -81,8 +106,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd /* Handle to the window */,
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
 
+			// Get State
+			LONG_PTR ptr = GetWindowLongPtr(hwnd, GWLP_USERDATA);
+			StateInfo *pState = reinterpret_cast<StateInfo*>(ptr);
+
 			// GDI function
-            FillRect(hdc, &ps.rcPaint /* Current update region */, (HBRUSH) (COLOR_WINDOW+1));
+            FillRect(hdc, &ps.rcPaint /* Current update region */, CreateSolidBrush(RGB(pState->r, pState->g, pState->b)));
 
             EndPaint(hwnd, &ps);
         }
@@ -94,6 +123,23 @@ LRESULT CALLBACK WindowProc(HWND hwnd /* Handle to the window */,
 
 void OnSize(HWND hwnd, UINT flag, int width, int height)
 {
-    // Handle resizing
+    // Change colours on resize (just for something to do using application state)
+	LONG_PTR ptr = GetWindowLongPtr(hwnd, GWLP_USERDATA);
+	StateInfo *pState = reinterpret_cast<StateInfo*>(ptr);
+
+	if(pState->r < 255)
+		pState->r++;
+	else
+		pState->r = 0;
+			
+	if(pState->g < 255)
+		pState->g++;
+	else
+		pState->g = 0;
+
+	if(pState->b < 255)
+		pState->b++;
+	else
+		pState->b = 0;
 }
  
