@@ -17,6 +17,7 @@ Debug/
 *.suo
 *.user
 ipch/*
+_Resharper.*
 
 # Project Specific
 *.sdf
