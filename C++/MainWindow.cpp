@@ -2,6 +2,15 @@
 
 #include "MainWindow.h"
 
+template<class T> void SafeRelease(T **ppT)
+{
+    if (*ppT)
+    {
+        (*ppT)->Release();
+        *ppT = NULL;
+    }
+}
+
 // Start with black as the colour
 MainWindow::MainWindow() : red(0), green(0), blue(0) { }
 
@@ -48,7 +57,7 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 					if (SUCCEEDED(hr))
 					{
 						// We want to populate an IFileOpenDialog from COM
-						IFileOpenDialog *pFileOpen;
+						IFileOpenDialog *pFileOpen = NULL;
 
 						// Create the FileOpenDialog object and populate our interface pointer
 						hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, 
@@ -63,7 +72,7 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 							if (SUCCEEDED(hr))
 							{
 								// Store the chosen file in a shell item interface pointer
-								IShellItem *pItem;
+								IShellItem *pItem = NULL;
 								hr = pFileOpen->GetResult(&pItem);
 								if (SUCCEEDED(hr))
 								{
@@ -77,11 +86,11 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 										CoTaskMemFree(pszFilePath);
 									}
 									// Last action in successful pointer scope is to release
-									pItem->Release();
+									SafeRelease(&pItem);
 								}
 							}
 							// Last action in successful pointer scope is to release
-							pFileOpen->Release();
+							SafeRelease(&pFileOpen);
 						}
 						CoUninitialize();
 					}
