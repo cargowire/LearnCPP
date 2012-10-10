@@ -1,4 +1,5 @@
 #include <shobjidl.h> 
+#include <atlbase.h>
 
 #include "MainWindow.h"
 
@@ -57,11 +58,10 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 					if (SUCCEEDED(hr))
 					{
 						// We want to populate an IFileOpenDialog from COM
-						IFileOpenDialog *pFileOpen = NULL;
+						CComPtr<IFileOpenDialog> pFileOpen;
 
 						// Create the FileOpenDialog object and populate our interface pointer
-						hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, 
-								IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+						hr = pFileOpen.CoCreateInstance(__uuidof(FileOpenDialog));
 
 						if (SUCCEEDED(hr))
 						{
@@ -72,7 +72,7 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 							if (SUCCEEDED(hr))
 							{
 								// Store the chosen file in a shell item interface pointer
-								IShellItem *pItem = NULL;
+								CComPtr<IShellItem> pItem;
 								hr = pFileOpen->GetResult(&pItem);
 								if (SUCCEEDED(hr))
 								{
@@ -85,12 +85,10 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 										MessageBox(NULL, pszFilePath, L"File Path", MB_OK);
 										CoTaskMemFree(pszFilePath);
 									}
-									// Last action in successful pointer scope is to release
-									SafeRelease(&pItem);
+									// pItem goes out of scope and releases self
 								}
 							}
-							// Last action in successful pointer scope is to release
-							SafeRelease(&pFileOpen);
+							// pFileOpen goes out of scope and releases self
 						}
 						CoUninitialize();
 					}
