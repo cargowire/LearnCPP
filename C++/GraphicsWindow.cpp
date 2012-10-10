@@ -49,10 +49,16 @@ HRESULT GraphicsWindow::CreateGraphicsResources()
             const D2D1_COLOR_F color = D2D1::ColorF(1.0f, 1.0f, 0);
             hr = pRenderTarget->CreateSolidColorBrush(color, &pBrush); // Setup the member brush for usage
 
-            if (SUCCEEDED(hr))
+			if (SUCCEEDED(hr))
             {
-                CalculateLayout();
-            }
+				const D2D1_COLOR_F color = D2D1::ColorF(0, 0, 0);
+				hr = pRenderTarget->CreateSolidColorBrush(color, &pStrokeBrush); // Setup the member brush for stroke usage
+
+				if (SUCCEEDED(hr))
+				{
+					CalculateLayout();
+				}
+			}
         }
     }
     return hr;
@@ -63,7 +69,26 @@ void GraphicsWindow::DiscardGraphicsResources()
 	// Discard the target and the brush (as the brush is target dependent)
     SafeRelease(&pRenderTarget);
     SafeRelease(&pBrush);
+	SafeRelease(&pStrokeBrush);
 }
+
+void GraphicsWindow::DrawClockHand(float fHandLength, float fAngle, float fStrokeWidth)
+{
+    pRenderTarget->SetTransform(
+        D2D1::Matrix3x2F::Rotation(fAngle, ellipse.point)
+            );
+
+    // endPoint defines one end of the hand.
+    D2D_POINT_2F endPoint = D2D1::Point2F(
+        ellipse.point.x,
+        ellipse.point.y - (ellipse.radiusY * fHandLength)
+        );
+
+    // Draw a line from the center of the ellipse to endPoint.
+    pRenderTarget->DrawLine(
+        ellipse.point, endPoint, pStrokeBrush, fStrokeWidth);
+}
+
 
 void GraphicsWindow::OnPaint()
 {
@@ -77,6 +102,22 @@ void GraphicsWindow::OnPaint()
 
         pRenderTarget->Clear( D2D1::ColorF(D2D1::ColorF::SkyBlue) ); // Clear the device to blue
         pRenderTarget->FillEllipse(ellipse, pBrush); // Draw a circle using the members ellipse (that is adjusted by resize)
+
+		// Draw hands
+		SYSTEMTIME time;
+		GetLocalTime(&time);
+
+		// 60 minutes = 30 degrees, 1 minute = 0.5 degree
+		const float fHourAngle = (360.0f / 12) * (time.wHour) + (time.wMinute * 0.5f); 
+		const float fMinuteAngle =(360.0f / 60) * (time.wMinute);
+		const float fSecondAngle = (360.0f / 60) * (time.wSecond);
+
+		DrawClockHand(0.6f,  fHourAngle,   6);
+		DrawClockHand(0.85f, fMinuteAngle, 4);
+		DrawClockHand(0.85f, fSecondAngle, 2);
+
+		// Restore the identity transformation (as the transform is at this level not per scene item
+		pRenderTarget->SetTransform( D2D1::Matrix3x2F::Identity() );
 
         hr = pRenderTarget->EndDraw(); // If an error occurs during any of the draw commands (begin, clear, fillellipse) it is returned here
         if (FAILED(hr) || hr == D2DERR_RECREATE_TARGET)
