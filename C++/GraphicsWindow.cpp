@@ -1,7 +1,9 @@
 #include <windows.h>
+#include <WindowsX.h>
 #include <d2d1.h> // Contains helper functions/classes such as ColorF, Matrix3x2F for transforms and initializers for Direct2D structures
 
 #include "GraphicsWindow.h"
+#include "DPIScale.h"
 
 template <class T> void SafeRelease(T **ppT)
 {
@@ -15,15 +17,6 @@ template <class T> void SafeRelease(T **ppT)
 // Recalculate drawing layout when the size of the window changes.
 void GraphicsWindow::CalculateLayout()
 {
-    if (pRenderTarget != NULL)
-    {
-        D2D1_SIZE_F size = pRenderTarget->GetSize(); // Size returned in DIP not pixels
-        const float x = size.width / 2;
-        const float y = size.height / 2;
-        const float radius = min(x, y);
-		// Update the ellipse to match the new render target size
-        ellipse = D2D1::Ellipse(D2D1::Point2F(x, y), radius, radius);
-    }
 }
 
 HRESULT GraphicsWindow::CreateGraphicsResources()
@@ -155,6 +148,7 @@ LRESULT GraphicsWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             return -1;  // Fail CreateWindowEx.
         }
+		DPIScale::Initialize(pFactory);
         return 0;
 
     case WM_DESTROY:
@@ -167,10 +161,60 @@ LRESULT GraphicsWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
         OnPaint();
         return 0;
 
+	case WM_LBUTTONDOWN: 
+        OnLButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), (DWORD)wParam);
+        return 0;
+
+    case WM_LBUTTONUP: 
+        OnLButtonUp();
+        return 0;
+		
+    case WM_MOUSEMOVE: 
+        OnMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), (DWORD)wParam);
+        return 0;
 
     case WM_SIZE:
         Resize();
         return 0;
     }
     return DefWindowProc(m_hwnd, uMsg, wParam, lParam);
+}
+
+void GraphicsWindow::OnLButtonDown(int pixelX, int pixelY, DWORD flags)
+{
+	// We wish to capture the size of the drawing even if the mouse leaves the current window so capture it
+    SetCapture(m_hwnd);
+	// Reset the ellipse
+    ellipse.point = ptMouse = DPIScale::PixelsToDips(pixelX, pixelY);
+    ellipse.radiusX = ellipse.radiusY = 1.0f; 
+
+	// Force a repaint
+    InvalidateRect(m_hwnd, NULL, FALSE);
+}
+
+void GraphicsWindow::OnMouseMove(int pixelX, int pixelY, DWORD flags)
+{
+    if (flags & MK_LBUTTON) 
+    { 
+		// Get the position
+        const D2D1_POINT_2F dips = DPIScale::PixelsToDips(pixelX, pixelY);
+
+		// Figure out the size of the rect based on the starting position. Half for Radii
+        const float width = (dips.x - ptMouse.x) / 2;
+        const float height = (dips.y - ptMouse.y) / 2;
+        const float x1 = ptMouse.x + width;
+        const float y1 = ptMouse.y + height;
+
+		// Set the ellipse to start from the middle of the bounding rect with width/height radii
+        ellipse = D2D1::Ellipse(D2D1::Point2F(x1, y1), width, height);
+
+		// Force a repaint
+        InvalidateRect(m_hwnd, NULL, FALSE);
+    }
+}
+
+void GraphicsWindow::OnLButtonUp()
+{
+	// Stop capturing the mouse outside of the window
+    ReleaseCapture(); 
 }
