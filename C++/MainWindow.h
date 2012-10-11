@@ -1,4 +1,7 @@
+#ifndef BASEWINDOW_H
+#define BASEWINDOW_H
 #include "BaseWindow.h"
+#endif
 
 class MainWindow : public BaseWindow<MainWindow>
 {

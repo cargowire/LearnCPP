@@ -2,7 +2,10 @@
 #include <WindowsX.h>
 #include <d2d1.h> // Contains helper functions/classes such as ColorF, Matrix3x2F for transforms and initializers for Direct2D structures
 
+#ifndef GRAPHICSWINDOW_H
+#define GRAPHICSWINDOW_H
 #include "GraphicsWindow.h"
+#endif
 #include "DPIScale.h"
 #include "resource.h"
 
@@ -197,8 +200,7 @@ LRESULT GraphicsWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
         DiscardGraphicsResources();
         SafeRelease(&pFactory);
-        PostQuitMessage(0);
-        return 0;
+        break;
 
     case WM_PAINT:
         OnPaint();

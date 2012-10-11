@@ -4,7 +4,10 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 
+#ifndef OPENGLWINDOW_H
+#define OPENGLWINDOW_H
 #include "OpenGLWindow.h"
+#endif
 
 LRESULT OpenGLWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -54,9 +57,7 @@ LRESULT OpenGLWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
             // Clean up and terminate.
             wglDeleteContext( hRC );
-            PostQuitMessage( 0 );
-            return 0;
-
+			break;
     }
 
     return DefWindowProc( m_hwnd, uMsg, wParam, lParam );

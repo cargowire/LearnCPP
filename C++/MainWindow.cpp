@@ -1,7 +1,10 @@
 #include <shobjidl.h> 
 #include <atlbase.h>
 
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 #include "MainWindow.h"
+#endif
 
 template<class T> void SafeRelease(T **ppT)
 {
@@ -23,10 +26,6 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
     {
-		case WM_DESTROY:
-			PostQuitMessage(0); // Add message to the queue to quit the application (return a 0 response from GetMessage)
-			return 0;
-
 		case WM_SIZE: // Example of using the size event.  lParam contains 2 16bit numbers packed into one 32
 			{
 				int width = LOWORD(lParam);  // Macro to get the low-order word.
@@ -92,8 +91,8 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 						}
 						CoUninitialize();
 					}
-					return 0;
 				}
+				//PostMessage(m_hwnd, WM_CLOSE, 0, 0);
 			}
 			break;
     }

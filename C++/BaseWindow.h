@@ -1,5 +1,7 @@
 #include <windows.h>
 
+template <class T> void SafeRelease(T **ppT);
+
 template <class DERIVED_TYPE> 
 class BaseWindow
 {
@@ -41,12 +43,12 @@ public:
     BOOL Create(
         PCWSTR lpWindowName,
         DWORD dwStyle,
+		HWND hWndParent = 0,
         DWORD dwExStyle = 0,
         int x = CW_USEDEFAULT,
         int y = CW_USEDEFAULT,
         int nWidth = CW_USEDEFAULT,
         int nHeight = CW_USEDEFAULT,
-        HWND hWndParent = 0,
         HMENU hMenu = 0
         )
     {

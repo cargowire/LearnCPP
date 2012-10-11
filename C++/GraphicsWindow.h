@@ -3,11 +3,20 @@
 #include <list> // For standard library list
 #include <memory> // For shared_ptr
 
+#ifndef BASEWINDOW_H
+#define BASEWINDOW_H
 #include "BaseWindow.h"
-#include "DrawableEllipse.h"
-#include "DrawingMode.h"
+#endif
 
-template <class T> void SafeRelease(T **ppT);
+#ifndef DRAWABLEELLIPSE_H
+#define DRAWABLEELLIPSE_H
+#include "DrawableEllipse.h"
+#endif
+
+#ifndef DRAWINGMODE_H
+#define DRAWINGMODE_H
+#include "DrawingMode.h"
+#endif
 
 class GraphicsWindow : public BaseWindow<GraphicsWindow>
 {
