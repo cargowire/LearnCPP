@@ -68,6 +68,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="MouseTrackEvents.cpp" />
+    <ClCompile Include="OpenGLWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseWindow.h" />
@@ -77,6 +78,7 @@
     <ClInclude Include="GraphicsWindow.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="MouseTrackEvents.h" />
+    <ClInclude Include="OpenGLWindow.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
