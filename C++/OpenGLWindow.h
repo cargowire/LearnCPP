@@ -9,6 +9,7 @@
 class OpenGLWindow : public BaseWindow<OpenGLWindow>
 {
 	void OnPaint();
+	void OnFrame();
 
 	HGLRC SetUpOpenGL(HWND hwnd);
 	void DrawOpenGLScene(void);
@@ -17,6 +18,8 @@ class OpenGLWindow : public BaseWindow<OpenGLWindow>
     HGLRC hRC; // Note this is STATIC!
     GLdouble gldAspect;
     GLsizei glnWidth, glnHeight;
+	UINT_PTR m_nTimerID;
+	float rotation;
 
 public:
 

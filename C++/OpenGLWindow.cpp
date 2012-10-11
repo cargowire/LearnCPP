@@ -16,6 +16,7 @@ LRESULT OpenGLWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
 		// Create an appropriate render context
         hRC = SetUpOpenGL(m_hwnd);
+		SetTimer(m_hwnd, m_nTimerID, 34, NULL); // Approx 30 frames a second
         return 0;
 
     case WM_SIZE:
@@ -53,7 +54,10 @@ LRESULT OpenGLWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
 			OnPaint();
             return 0;
-
+	case WM_TIMER:
+			OnFrame();
+			InvalidateRect(m_hwnd, NULL, FALSE); // allow rudimentary animation to take place
+			break;
     case WM_DESTROY:
             // Clean up and terminate.
             wglDeleteContext( hRC );
@@ -61,6 +65,15 @@ LRESULT OpenGLWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
 
     return DefWindowProc( m_hwnd, uMsg, wParam, lParam );
+}
+
+void OpenGLWindow::OnFrame()
+{
+	rotation += 5;
+	if(rotation > 360)
+	{
+		rotation -= 360;
+	}
 }
 
 void OpenGLWindow::OnPaint()
@@ -127,9 +140,13 @@ void OpenGLWindow::DrawOpenGLScene( )
     // Define the modelview transformation.
     glMatrixMode( GL_MODELVIEW );
 	glLoadIdentity(); // clear our matrix before we perform the translate to view the scene (otherwise the translate would multiply)
+	glRotatef(rotation, 0, 0, 1);
 
     // Move the viewpoint out to where we can see everything
-    glTranslatef( 0.0f, 0.0f, -5.0f );
+    glTranslatef(0.0f, 0.0f, -5.0f);
+	
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f );
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glBegin(GL_TRIANGLES /* Treats each triplet of vertices as an independent triangle */);
         glColor3f(1.0,0.0,0.0);//red color for the triangle
