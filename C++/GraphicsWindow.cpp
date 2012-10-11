@@ -253,6 +253,9 @@ LRESULT GraphicsWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case ID_MOVE_DOWN:
 				MoveSelectionDown();
 				break;
+			case ID_DELETE:
+				DeleteSelection();
+				break;
         }
         return 0;
 	case WM_SETCURSOR:
@@ -355,6 +358,15 @@ HRESULT GraphicsWindow::InsertEllipse(float x, float y)
         return E_OUTOFMEMORY;
     }
     return S_OK;
+}
+
+void GraphicsWindow::DeleteSelection()
+{
+	if(Selection()) {
+		ellipses.erase(selection);
+		ClearSelection();
+		InvalidateRect(m_hwnd, NULL, FALSE); // Redraw the scene without this item
+	}
 }
 
 void GraphicsWindow::MoveSelectionUp()
