@@ -13,4 +13,16 @@ public:
     {
         return D2D1::Point2F(static_cast<float>(x) / scaleX, static_cast<float>(y) / scaleY);
     }
+
+	template <typename T>
+	static float PixelsToDipsX(T x)
+    {
+        return static_cast<float>(x) / scaleX;
+    }
+
+	template <typename T>
+	static float PixelsToDipsY(T y)
+    {
+        return static_cast<float>(y) / scaleY;
+    }
 };

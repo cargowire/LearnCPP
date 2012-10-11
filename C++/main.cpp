@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <memory>
 
+#include "resource.h"
 #include "GraphicsWindow.h"
 
 int WINAPI wWinMain(HINSTANCE hInstance /* The current application instance handle */,
@@ -17,12 +18,20 @@ int WINAPI wWinMain(HINSTANCE hInstance /* The current application instance hand
 
     ShowWindow(win.Window(), nCmdShow);
 
+	// Load Accelerators
+	HACCEL hAccel = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDR_ACCELERATOR1));
+
 	// Run the message loop.
     MSG msg = { };
     while (GetMessage(&msg, NULL, 0, 0))
     {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+		// Attempt to translate an accelerator and action it.
+		if (!TranslateAccelerator(win.Window(), hAccel, &msg))
+        {
+			// Failure to translate an accelerator = zero so continue normal translate/dispatch flow
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
     }
 
     return 0;

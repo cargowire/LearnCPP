@@ -72,9 +72,15 @@
   <ItemGroup>
     <ClInclude Include="BaseWindow.h" />
     <ClInclude Include="DPIScale.h" />
+    <ClInclude Include="DrawableEllipse.h" />
+    <ClInclude Include="DrawingMode.h" />
     <ClInclude Include="GraphicsWindow.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="MouseTrackEvents.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="C++.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
