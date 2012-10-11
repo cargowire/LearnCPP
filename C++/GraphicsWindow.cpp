@@ -195,13 +195,17 @@ LRESULT GraphicsWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
             return -1;  // Fail CreateWindowEx.
         }
 		DPIScale::Initialize(pFactory);
+		SetTimer(m_hwnd, m_nTimerID, 1000, NULL);
         return 0;
 
     case WM_DESTROY:
+		KillTimer(m_hwnd, m_nTimerID);
         DiscardGraphicsResources();
         SafeRelease(&pFactory);
         break;
-
+	case WM_TIMER:
+		InvalidateRect(m_hwnd, NULL, FALSE); // allow the clock faces to cycle the second hand
+		break;
     case WM_PAINT:
         OnPaint();
         return 0;

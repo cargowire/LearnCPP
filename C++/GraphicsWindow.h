@@ -29,6 +29,7 @@ class GraphicsWindow : public BaseWindow<GraphicsWindow>
 	Mode					mode;
 	std::list<std::shared_ptr<DrawableEllipse>> ellipses; // List of ellipses to draw
 	std::list<std::shared_ptr<DrawableEllipse>>::iterator   selection; // Currently selected ellipsis (for movement)
+	UINT_PTR m_nTimerID;
 
     HRESULT CreateGraphicsResources();
     void    DiscardGraphicsResources();
