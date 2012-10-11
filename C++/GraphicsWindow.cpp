@@ -241,6 +241,12 @@ LRESULT GraphicsWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 					SetMode(DrawMode);
 				}
 				break;
+			case ID_MOVE_UP:
+				MoveSelectionUp();
+				break;
+			case ID_MOVE_DOWN:
+				MoveSelectionDown();
+				break;
         }
         return 0;
 	case WM_SETCURSOR:
@@ -343,6 +349,30 @@ HRESULT GraphicsWindow::InsertEllipse(float x, float y)
         return E_OUTOFMEMORY;
     }
     return S_OK;
+}
+
+void GraphicsWindow::MoveSelectionUp()
+{
+	// End isn't the last element showing, the item before end is so check for that case
+	if(Selection() && selection != prev(ellipses.end()) && selection != ellipses.end())
+	{
+		// Next copies and returns an iterator for the next position without effecting selection
+		// Selection is maintained as the list contains the same elements so the iterators are not invalidated
+		ellipses.splice(next(next(selection)), ellipses, selection);
+	}
+	InvalidateRect(m_hwnd, NULL, FALSE); // Redraw the newly layered scene
+}
+
+void GraphicsWindow::MoveSelectionDown()
+{
+	// If we're not the first ellipsis to be drawn then swap us with the one before us
+	if(Selection() && selection != ellipses.begin())
+	{
+		// Prev copies and returns an iterator for the previous position without effecting selection
+		// Selection is maintained as the list contains the same elements so the iterators are not invalidated
+		ellipses.splice(prev(selection), ellipses, selection);
+	}
+	InvalidateRect(m_hwnd, NULL, FALSE); // Redraw the newly layered scene
 }
 
 BOOL GraphicsWindow::HitTest(float x, float y)

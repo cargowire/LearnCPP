@@ -31,6 +31,8 @@ class GraphicsWindow : public BaseWindow<GraphicsWindow>
     void    Resize();
 	void GraphicsWindow::SetMode(Mode m);
 	std::shared_ptr<DrawableEllipse> Selection();
+	void MoveSelectionUp();
+	void MoveSelectionDown();
 	void    ClearSelection();
 
 	HRESULT InsertEllipse(float x, float y);
