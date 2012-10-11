@@ -67,12 +67,14 @@
     <ClCompile Include="GraphicsWindow.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="MouseTrackEvents.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseWindow.h" />
     <ClInclude Include="DPIScale.h" />
     <ClInclude Include="GraphicsWindow.h" />
     <ClInclude Include="MainWindow.h" />
+    <ClInclude Include="MouseTrackEvents.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
