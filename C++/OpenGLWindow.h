@@ -6,6 +6,11 @@
 #include "BaseWindow.h"
 #endif
 
+#ifndef DRAWINGMODE_H
+#define DRAWINGMODE_H
+#include "DrawingMode.h"
+#endif
+
 class OpenGLWindow : public BaseWindow<OpenGLWindow>
 {
 	void OnPaint();
@@ -19,11 +24,13 @@ class OpenGLWindow : public BaseWindow<OpenGLWindow>
     GLdouble gldAspect;
     GLsizei glnWidth, glnHeight;
 	UINT_PTR m_nTimerID;
+	bool animate;
 	float rotation;
+	bool render3D;
 
 public:
 
-    OpenGLWindow()
+    OpenGLWindow() : render3D(false)
     {
     }
 

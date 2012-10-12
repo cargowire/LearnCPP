@@ -9,6 +9,8 @@
 #include "OpenGLWindow.h"
 #endif
 
+#include "resource.h"
+
 LRESULT OpenGLWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch(uMsg)
@@ -58,6 +60,24 @@ LRESULT OpenGLWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			OnFrame();
 			InvalidateRect(m_hwnd, NULL, FALSE); // allow rudimentary animation to take place
 			break;
+	case WM_COMMAND: // We've received an accelerator command
+        switch (LOWORD(wParam))
+        {
+			case ID_TOGGLE_MODE:
+				if (render3D)
+				{
+					render3D = false;
+				}
+				else
+				{
+					render3D = true;
+				}
+				break;
+        }
+        return 0;
+	case WM_LBUTTONUP:
+		animate = !animate;
+		break;
     case WM_DESTROY:
             // Clean up and terminate.
             wglDeleteContext( hRC );
@@ -69,10 +89,12 @@ LRESULT OpenGLWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void OpenGLWindow::OnFrame()
 {
-	rotation += 5;
-	if(rotation > 360)
-	{
-		rotation -= 360;
+	if(animate) {
+		rotation += 5;
+		if(rotation > 360)
+		{
+			rotation -= 360;
+		}
 	}
 }
 
@@ -137,33 +159,76 @@ HGLRC OpenGLWindow::SetUpOpenGL( HWND hWnd )
 
 void OpenGLWindow::DrawOpenGLScene( )
 {    
+	if(render3D)
+		glEnable(GL_DEPTH_TEST);
+
     // Define the modelview transformation.
     glMatrixMode( GL_MODELVIEW );
-	glLoadIdentity(); // clear our matrix before we perform the translate to view the scene (otherwise the translate would multiply)
-	glRotatef(rotation, 0, 0, 1);
 
-    // Move the viewpoint out to where we can see everything
-    glTranslatef(0.0f, 0.0f, -5.0f);
-	
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f );
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glBegin(GL_TRIANGLES /* Treats each triplet of vertices as an independent triangle */);
-        glColor3f(1.0,0.0,0.0);//red color for the triangle
-        glVertex3f(0.0,0.0,0);
-        glVertex3f(0.0,1.0,0);
-        glVertex3f(1.0,0.0,0);
+	if(render3D){
+		glLoadIdentity(); // clear our matrix before we perform the translate to view the scene (otherwise the translate would multiply)
+		glTranslatef(0.0f, 0.0f,-7.0f);	// Translate Into The Screen 7.0 Units
+		glRotatef(rotation,0.0f,1.0f,0.0f);	// Rotate The cube around the Y axis
+		glRotatef(rotation,1.0f,1.0f,1.0f);
 
-        glColor3f(0.0,1.0,0.0);//Green color for the triangle
-        glVertex3f(0.0,0.0,0);
-        glVertex3f(0.0,1.0,0);
-        glVertex3f(-1.0,0.0,0);
+		glBegin(GL_QUADS);		// Draw The Cube Using quads
+			glColor3f(0.0f,1.0f,0.0f);	// Color Blue
+			glVertex3f( 1.0f, 1.0f,-1.0f);	// Top Right Of The Quad (Top)
+			glVertex3f(-1.0f, 1.0f,-1.0f);	// Top Left Of The Quad (Top)
+			glVertex3f(-1.0f, 1.0f, 1.0f);	// Bottom Left Of The Quad (Top)
+			glVertex3f( 1.0f, 1.0f, 1.0f);	// Bottom Right Of The Quad (Top)
+			glColor3f(1.0f,0.5f,0.0f);	// Color Orange
+			glVertex3f( 1.0f,-1.0f, 1.0f);	// Top Right Of The Quad (Bottom)
+			glVertex3f(-1.0f,-1.0f, 1.0f);	// Top Left Of The Quad (Bottom)
+			glVertex3f(-1.0f,-1.0f,-1.0f);	// Bottom Left Of The Quad (Bottom)
+			glVertex3f( 1.0f,-1.0f,-1.0f);	// Bottom Right Of The Quad (Bottom)
+			glColor3f(1.0f,0.0f,0.0f);	// Color Red	
+			glVertex3f( 1.0f, 1.0f, 1.0f);	// Top Right Of The Quad (Front)
+			glVertex3f(-1.0f, 1.0f, 1.0f);	// Top Left Of The Quad (Front)
+			glVertex3f(-1.0f,-1.0f, 1.0f);	// Bottom Left Of The Quad (Front)
+			glVertex3f( 1.0f,-1.0f, 1.0f);	// Bottom Right Of The Quad (Front)
+			glColor3f(1.0f,1.0f,0.0f);	// Color Yellow
+			glVertex3f( 1.0f,-1.0f,-1.0f);	// Top Right Of The Quad (Back)
+			glVertex3f(-1.0f,-1.0f,-1.0f);	// Top Left Of The Quad (Back)
+			glVertex3f(-1.0f, 1.0f,-1.0f);	// Bottom Left Of The Quad (Back)
+			glVertex3f( 1.0f, 1.0f,-1.0f);	// Bottom Right Of The Quad (Back)
+			glColor3f(0.0f,0.0f,1.0f);	// Color Blue
+			glVertex3f(-1.0f, 1.0f, 1.0f);	// Top Right Of The Quad (Left)
+			glVertex3f(-1.0f, 1.0f,-1.0f);	// Top Left Of The Quad (Left)
+			glVertex3f(-1.0f,-1.0f,-1.0f);	// Bottom Left Of The Quad (Left)
+			glVertex3f(-1.0f,-1.0f, 1.0f);	// Bottom Right Of The Quad (Left)
+			glColor3f(1.0f,0.0f,1.0f);	// Color Violet
+			glVertex3f( 1.0f, 1.0f,-1.0f);	// Top Right Of The Quad (Right)
+			glVertex3f( 1.0f, 1.0f, 1.0f);	// Top Left Of The Quad (Right)
+			glVertex3f( 1.0f,-1.0f, 1.0f);	// Bottom Left Of The Quad (Right)
+			glVertex3f( 1.0f,-1.0f,-1.0f);	// Bottom Right Of The Quad (Right)
+		  glEnd();
+	}else{
+		glLoadIdentity(); // clear our matrix before we perform the translate to view the scene (otherwise the translate would multiply)
+		glRotatef(rotation, 0, 0, 1);
 
-        glColor3f(0.0,0.0,1.0);//Blue color for the triangle
-        glVertex3f(1.0,0.0,0);
-        glVertex3f(0.0,-1.0,0);
-        glVertex3f(-1.0,0.0,0);
-    glEnd();
+		// Move the viewpoint out to where we can see everything
+		glTranslatef(0.0f, 0.0f, -5.0f);
 
+		glBegin(GL_TRIANGLES /* Treats each triplet of vertices as an independent triangle */);
+			glColor3f(1.0,0.0,0.0);//red color for the triangle
+			glVertex3f(0.0,0.0,0);
+			glVertex3f(0.0,1.0,0);
+			glVertex3f(1.0,0.0,0);
+
+			glColor3f(0.0,1.0,0.0);//Green color for the triangle
+			glVertex3f(0.0,0.0,0);
+			glVertex3f(0.0,1.0,0);
+			glVertex3f(-1.0,0.0,0);
+
+			glColor3f(0.0,0.0,1.0);//Blue color for the triangle
+			glVertex3f(1.0,0.0,0);
+			glVertex3f(0.0,-1.0,0);
+			glVertex3f(-1.0,0.0,0);
+		glEnd();
+	}
     glFlush();
 }
