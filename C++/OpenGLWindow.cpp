@@ -169,66 +169,68 @@ void OpenGLWindow::DrawOpenGLScene( )
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if(render3D){
-		glLoadIdentity(); // clear our matrix before we perform the translate to view the scene (otherwise the translate would multiply)
-		glTranslatef(0.0f, 0.0f,-7.0f);	// Translate Into The Screen 7.0 Units
-		glRotatef(rotation,0.0f,1.0f,0.0f);	// Rotate The cube around the Y axis
-		glRotatef(rotation,1.0f,1.0f,1.0f);
+		glPushMatrix(); // Pushes the current matrix stack (32 items for GL_MODELVIEW) down by one, duplicating the current matrix
+			glTranslatef(0.0f, 0.0f,-7.0f);	// Translate Into The Screen 7.0 Units
+			glRotatef(rotation,0.0f,1.0f,0.0f);	// Rotate The cube around the Y axis
+			glRotatef(rotation,1.0f,1.0f,1.0f);
 
-		glBegin(GL_QUADS);		// Draw The Cube Using quads
-			glColor3f(0.0f,1.0f,0.0f);	// Color Blue
-			glVertex3f( 1.0f, 1.0f,-1.0f);	// Top Right Of The Quad (Top)
-			glVertex3f(-1.0f, 1.0f,-1.0f);	// Top Left Of The Quad (Top)
-			glVertex3f(-1.0f, 1.0f, 1.0f);	// Bottom Left Of The Quad (Top)
-			glVertex3f( 1.0f, 1.0f, 1.0f);	// Bottom Right Of The Quad (Top)
-			glColor3f(1.0f,0.5f,0.0f);	// Color Orange
-			glVertex3f( 1.0f,-1.0f, 1.0f);	// Top Right Of The Quad (Bottom)
-			glVertex3f(-1.0f,-1.0f, 1.0f);	// Top Left Of The Quad (Bottom)
-			glVertex3f(-1.0f,-1.0f,-1.0f);	// Bottom Left Of The Quad (Bottom)
-			glVertex3f( 1.0f,-1.0f,-1.0f);	// Bottom Right Of The Quad (Bottom)
-			glColor3f(1.0f,0.0f,0.0f);	// Color Red	
-			glVertex3f( 1.0f, 1.0f, 1.0f);	// Top Right Of The Quad (Front)
-			glVertex3f(-1.0f, 1.0f, 1.0f);	// Top Left Of The Quad (Front)
-			glVertex3f(-1.0f,-1.0f, 1.0f);	// Bottom Left Of The Quad (Front)
-			glVertex3f( 1.0f,-1.0f, 1.0f);	// Bottom Right Of The Quad (Front)
-			glColor3f(1.0f,1.0f,0.0f);	// Color Yellow
-			glVertex3f( 1.0f,-1.0f,-1.0f);	// Top Right Of The Quad (Back)
-			glVertex3f(-1.0f,-1.0f,-1.0f);	// Top Left Of The Quad (Back)
-			glVertex3f(-1.0f, 1.0f,-1.0f);	// Bottom Left Of The Quad (Back)
-			glVertex3f( 1.0f, 1.0f,-1.0f);	// Bottom Right Of The Quad (Back)
-			glColor3f(0.0f,0.0f,1.0f);	// Color Blue
-			glVertex3f(-1.0f, 1.0f, 1.0f);	// Top Right Of The Quad (Left)
-			glVertex3f(-1.0f, 1.0f,-1.0f);	// Top Left Of The Quad (Left)
-			glVertex3f(-1.0f,-1.0f,-1.0f);	// Bottom Left Of The Quad (Left)
-			glVertex3f(-1.0f,-1.0f, 1.0f);	// Bottom Right Of The Quad (Left)
-			glColor3f(1.0f,0.0f,1.0f);	// Color Violet
-			glVertex3f( 1.0f, 1.0f,-1.0f);	// Top Right Of The Quad (Right)
-			glVertex3f( 1.0f, 1.0f, 1.0f);	// Top Left Of The Quad (Right)
-			glVertex3f( 1.0f,-1.0f, 1.0f);	// Bottom Left Of The Quad (Right)
-			glVertex3f( 1.0f,-1.0f,-1.0f);	// Bottom Right Of The Quad (Right)
-		  glEnd();
+			glBegin(GL_QUADS);		// Draw The Cube Using quads
+				glColor3f(0.0f,1.0f,0.0f);	// Color Blue
+				glVertex3f( 1.0f, 1.0f,-1.0f);	// Top Right Of The Quad (Top)
+				glVertex3f(-1.0f, 1.0f,-1.0f);	// Top Left Of The Quad (Top)
+				glVertex3f(-1.0f, 1.0f, 1.0f);	// Bottom Left Of The Quad (Top)
+				glVertex3f( 1.0f, 1.0f, 1.0f);	// Bottom Right Of The Quad (Top)
+				glColor3f(1.0f,0.5f,0.0f);	// Color Orange
+				glVertex3f( 1.0f,-1.0f, 1.0f);	// Top Right Of The Quad (Bottom)
+				glVertex3f(-1.0f,-1.0f, 1.0f);	// Top Left Of The Quad (Bottom)
+				glVertex3f(-1.0f,-1.0f,-1.0f);	// Bottom Left Of The Quad (Bottom)
+				glVertex3f( 1.0f,-1.0f,-1.0f);	// Bottom Right Of The Quad (Bottom)
+				glColor3f(1.0f,0.0f,0.0f);	// Color Red	
+				glVertex3f( 1.0f, 1.0f, 1.0f);	// Top Right Of The Quad (Front)
+				glVertex3f(-1.0f, 1.0f, 1.0f);	// Top Left Of The Quad (Front)
+				glVertex3f(-1.0f,-1.0f, 1.0f);	// Bottom Left Of The Quad (Front)
+				glVertex3f( 1.0f,-1.0f, 1.0f);	// Bottom Right Of The Quad (Front)
+				glColor3f(1.0f,1.0f,0.0f);	// Color Yellow
+				glVertex3f( 1.0f,-1.0f,-1.0f);	// Top Right Of The Quad (Back)
+				glVertex3f(-1.0f,-1.0f,-1.0f);	// Top Left Of The Quad (Back)
+				glVertex3f(-1.0f, 1.0f,-1.0f);	// Bottom Left Of The Quad (Back)
+				glVertex3f( 1.0f, 1.0f,-1.0f);	// Bottom Right Of The Quad (Back)
+				glColor3f(0.0f,0.0f,1.0f);	// Color Blue
+				glVertex3f(-1.0f, 1.0f, 1.0f);	// Top Right Of The Quad (Left)
+				glVertex3f(-1.0f, 1.0f,-1.0f);	// Top Left Of The Quad (Left)
+				glVertex3f(-1.0f,-1.0f,-1.0f);	// Bottom Left Of The Quad (Left)
+				glVertex3f(-1.0f,-1.0f, 1.0f);	// Bottom Right Of The Quad (Left)
+				glColor3f(1.0f,0.0f,1.0f);	// Color Violet
+				glVertex3f( 1.0f, 1.0f,-1.0f);	// Top Right Of The Quad (Right)
+				glVertex3f( 1.0f, 1.0f, 1.0f);	// Top Left Of The Quad (Right)
+				glVertex3f( 1.0f,-1.0f, 1.0f);	// Bottom Left Of The Quad (Right)
+				glVertex3f( 1.0f,-1.0f,-1.0f);	// Bottom Right Of The Quad (Right)
+			  glEnd();
+
+		  glPopMatrix(); // Pops the 'copy' that we made and modified off of the stack
 	}else{
-		glLoadIdentity(); // clear our matrix before we perform the translate to view the scene (otherwise the translate would multiply)
-		glRotatef(rotation, 0, 0, 1);
+		glPushMatrix(); // Pushes the current matrix stack (32 items for GL_MODELVIEW) down by one, duplicating the current matrix
+			glRotatef(rotation, 0, 0, 1);
+			glTranslatef(0.0f, 0.0f, -5.0f); // Move the viewpoint out to where we can see everything
 
-		// Move the viewpoint out to where we can see everything
-		glTranslatef(0.0f, 0.0f, -5.0f);
+			glBegin(GL_TRIANGLES /* Treats each triplet of vertices as an independent triangle */);
+				glColor3f(1.0,0.0,0.0);//red color for the triangle
+				glVertex3f(0.0,0.0,0);
+				glVertex3f(0.0,1.0,0);
+				glVertex3f(1.0,0.0,0);
 
-		glBegin(GL_TRIANGLES /* Treats each triplet of vertices as an independent triangle */);
-			glColor3f(1.0,0.0,0.0);//red color for the triangle
-			glVertex3f(0.0,0.0,0);
-			glVertex3f(0.0,1.0,0);
-			glVertex3f(1.0,0.0,0);
+				glColor3f(0.0,1.0,0.0);//Green color for the triangle
+				glVertex3f(0.0,0.0,0);
+				glVertex3f(0.0,1.0,0);
+				glVertex3f(-1.0,0.0,0);
 
-			glColor3f(0.0,1.0,0.0);//Green color for the triangle
-			glVertex3f(0.0,0.0,0);
-			glVertex3f(0.0,1.0,0);
-			glVertex3f(-1.0,0.0,0);
+				glColor3f(0.0,0.0,1.0);//Blue color for the triangle
+				glVertex3f(1.0,0.0,0);
+				glVertex3f(0.0,-1.0,0);
+				glVertex3f(-1.0,0.0,0);
+			glEnd();
 
-			glColor3f(0.0,0.0,1.0);//Blue color for the triangle
-			glVertex3f(1.0,0.0,0);
-			glVertex3f(0.0,-1.0,0);
-			glVertex3f(-1.0,0.0,0);
-		glEnd();
+		glPopMatrix(); // Pops the 'copy' that we made and modified off of the stack
 	}
     glFlush();
 }
