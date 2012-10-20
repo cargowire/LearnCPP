@@ -1,19 +1,9 @@
-#ifndef BASEWINDOW_H
-#define BASEWINDOW_H
+#pragma once
+
 #include "BaseWindow.h"
-#endif
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
 #include "MainWindow.h"
-#endif
-#ifndef GRAPHICSWINDOW_H
-#define GRAPHICSWINDOW_H
 #include "GraphicsWindow.h"
-#endif
-#ifndef OPENGLWINDOW_H
-#define OPENGLWINDOW_H
 #include "OpenGLWindow.h"
-#endif
 
 class MenuWindow : public BaseWindow<MenuWindow>
 {

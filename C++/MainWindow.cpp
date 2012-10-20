@@ -1,10 +1,7 @@
 #include <shobjidl.h> 
 #include <atlbase.h>
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
 #include "MainWindow.h"
-#endif
 
 template<class T> void SafeRelease(T **ppT)
 {

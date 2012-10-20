@@ -4,10 +4,7 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 
-#ifndef OPENGLWINDOW_H
-#define OPENGLWINDOW_H
 #include "OpenGLWindow.h"
-#endif
 
 #include "resource.h"
 

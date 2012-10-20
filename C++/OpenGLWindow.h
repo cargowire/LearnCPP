@@ -1,15 +1,10 @@
+#pragma once
+
 #include <Windows.h>
 #include <GL/gl.h>
 
-#ifndef BASEWINDOW_H
-#define BASEWINDOW_H
 #include "BaseWindow.h"
-#endif
-
-#ifndef DRAWINGMODE_H
-#define DRAWINGMODE_H
 #include "DrawingMode.h"
-#endif
 
 class OpenGLWindow : public BaseWindow<OpenGLWindow>
 {

@@ -3,18 +3,9 @@
 
 #include "MenuWindow.h"
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
 #include "MainWindow.h"
-#endif
-#ifndef GRAPHICSWINDOW_H
-#define GRAPHICSWINDOW_H
 #include "GraphicsWindow.h"
-#endif
-#ifndef OPENGLWINDOW_H
-#define OPENGLWINDOW_H
 #include "OpenGLWindow.h"
-#endif
 
 template<class T> void SafeRelease(T **ppT)
 {

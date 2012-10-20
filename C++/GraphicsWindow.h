@@ -1,3 +1,5 @@
+#pragma once
+
 #include <windows.h>
 #pragma comment(lib, "d2d1")
 #include <list> // For standard library list

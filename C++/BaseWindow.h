@@ -1,3 +1,5 @@
+#pragma once
+
 #include <windows.h>
 
 template <class T> void SafeRelease(T **ppT);
